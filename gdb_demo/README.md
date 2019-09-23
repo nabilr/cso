@@ -1,5 +1,9 @@
 ## GDB Tutorials
 
+### C Programming Life Cycle
+
+![C Programming Life Cycle](https://upload.wikimedia.org/wikipedia/commons/3/3f/Program_life_cycle_IPL.png)
+
 ### What is GDB ?
 
 - Gdb is a tool which control your program execution.
@@ -93,37 +97,135 @@ int sum(int num1, int num2)
 [Click here to know more information about ojdump ](https://en.wikipedia.org/wiki/Objdump)
 
 **Please note** that the line marked red is correspnding code for each assembly instruction
-```markdown
-$ objdump -d  sum.o
 
-sum.o:     file format elf32-i386
+relocatable object file main.o
+```markdown
+gdb_demo$objdump -d main.o
+
+main.o:     file format elf32-i386
 
 
 Disassembly of section .text:
 
-00000000 <sum>:
-   0:	`83 ec 10`             	sub    $0x10,%esp
-   3:	`8b 54 24 14`          	mov    0x14(%esp),%edx
-   7:	`8b 44 24 18`          	mov    0x18(%esp),%eax
-   b:	`01 d0`                	add    %edx,%eax
-   d:	`89 44 24 0c`          	mov    %eax,0xc(%esp)
-  11:	`8b 44 24 0c`          	mov    0xc(%esp),%eax
-  15:	`83 c4 10`             	add    $0x10,%esp
-  18:	`c3`                   	ret    
+00000000 <main>:
+   0:	55                   	push   %ebp
+   1:	89 e5                	mov    %esp,%ebp
+   3:	83 e4 f0             	and    $0xfffffff0,%esp
+   6:	83 ec 20             	sub    $0x20,%esp
+   9:	c7 44 24 1c 0a 00 00 	movl   $0xa,0x1c(%esp)
+  10:	00 
+  11:	c7 44 24 18 14 00 00 	movl   $0x14,0x18(%esp)
+  18:	00 
+  19:	8b 44 24 18          	mov    0x18(%esp),%eax
+  1d:	31 44 24 1c          	xor    %eax,0x1c(%esp)
+  21:	8b 44 24 1c          	mov    0x1c(%esp),%eax
+  25:	31 44 24 18          	xor    %eax,0x18(%esp)
+  29:	8b 44 24 18          	mov    0x18(%esp),%eax
+  2d:	31 44 24 1c          	xor    %eax,0x1c(%esp)
+  31:	8b 44 24 18          	mov    0x18(%esp),%eax
+  35:	89 44 24 04          	mov    %eax,0x4(%esp)
+  39:	8b 44 24 1c          	mov    0x1c(%esp),%eax
+  3d:	89 04 24             	mov    %eax,(%esp)
+  40:	e8 fc ff ff ff       	call   41 <main+0x41>
+  45:	89 44 24 14          	mov    %eax,0x14(%esp)
+  49:	8b 44 24 14          	mov    0x14(%esp),%eax
+  4d:	89 44 24 08          	mov    %eax,0x8(%esp)
+  51:	8b 44 24 18          	mov    0x18(%esp),%eax
+  55:	89 44 24 04          	mov    %eax,0x4(%esp)
+  59:	8b 44 24 1c          	mov    0x1c(%esp),%eax
+  5d:	89 04 24             	mov    %eax,(%esp)
+  60:	e8 fc ff ff ff       	call   61 <main+0x61>
+  65:	b8 00 00 00 00       	mov    $0x0,%eax
+  6a:	c9                   	leave  
+  6b:	c3                   	ret    
 
-
-
-**Bold** and _Italic_ and `Code` text
-
-[Link](url) and ![Image](src)
 ```
 
+#### Print the relocation entries of the relocatable object file main.o 
+```markdown
+gdb_demo$objdump -r main.o
+
+main.o:     file format elf32-i386
+
+RELOCATION RECORDS FOR [.text]:
+OFFSET   TYPE              VALUE 
+00000041 R_386_PC32        sum
+00000061 R_386_PC32        print_result
+
+
+RELOCATION RECORDS FOR [.debug_info]:
+OFFSET   TYPE              VALUE 
+00000006 R_386_32          .debug_abbrev
+0000000c R_386_32          .debug_str
+00000011 R_386_32          .debug_str
+00000015 R_386_32          .debug_str
+00000019 R_386_32          .text
+00000021 R_386_32          .debug_line
+00000026 R_386_32          .debug_str
+00000030 R_386_32          .text
+0000003f R_386_32          .debug_str
+0000004d R_386_32          .debug_str
+00000069 R_386_32          .debug_str
+00000077 R_386_32          .debug_str
+00000096 R_386_32          .debug_str
+000000b9 R_386_32          .debug_str
+
+
+RELOCATION RECORDS FOR [.debug_aranges]:
+OFFSET   TYPE              VALUE 
+00000006 R_386_32          .debug_info
+00000010 R_386_32          .text
+
+
+RELOCATION RECORDS FOR [.debug_line]:
+OFFSET   TYPE              VALUE 
+0000002a R_386_32          .text
+
+
+RELOCATION RECORDS FOR [.eh_frame]:
+OFFSET   TYPE              VALUE 
+00000020 R_386_PC32        .text
+```
+
+#### Disassemble main.out executable file after linking
+```markdown
+gdb_demo$objdump -d main.out  | grep -A 30 "<main>"
+0804844d <main>:
+ 804844d:	55                   	push   %ebp
+ 804844e:	89 e5                	mov    %esp,%ebp
+ 8048450:	83 e4 f0             	and    $0xfffffff0,%esp
+ 8048453:	83 ec 20             	sub    $0x20,%esp
+ 8048456:	c7 44 24 1c 0a 00 00 	movl   $0xa,0x1c(%esp)
+ 804845d:	00 
+ 804845e:	c7 44 24 18 14 00 00 	movl   $0x14,0x18(%esp)
+ 8048465:	00 
+ 8048466:	8b 44 24 18          	mov    0x18(%esp),%eax
+ 804846a:	31 44 24 1c          	xor    %eax,0x1c(%esp)
+ 804846e:	8b 44 24 1c          	mov    0x1c(%esp),%eax
+ 8048472:	31 44 24 18          	xor    %eax,0x18(%esp)
+ 8048476:	8b 44 24 18          	mov    0x18(%esp),%eax
+ 804847a:	31 44 24 1c          	xor    %eax,0x1c(%esp)
+ 804847e:	8b 44 24 18          	mov    0x18(%esp),%eax
+ 8048482:	89 44 24 04          	mov    %eax,0x4(%esp)
+ 8048486:	8b 44 24 1c          	mov    0x1c(%esp),%eax
+ 804848a:	89 04 24             	mov    %eax,(%esp)
+ 804848d:	e8 27 00 00 00       	call   80484b9 <sum>
+ 8048492:	89 44 24 14          	mov    %eax,0x14(%esp)
+ 8048496:	8b 44 24 14          	mov    0x14(%esp),%eax
+ 804849a:	89 44 24 08          	mov    %eax,0x8(%esp)
+ 804849e:	8b 44 24 18          	mov    0x18(%esp),%eax
+ 80484a2:	89 44 24 04          	mov    %eax,0x4(%esp)
+ 80484a6:	8b 44 24 1c          	mov    0x1c(%esp),%eax
+ 80484aa:	89 04 24             	mov    %eax,(%esp)
+ 80484ad:	e8 20 00 00 00       	call   80484d2 <print_result>
+ 80484b2:	b8 00 00 00 00       	mov    $0x0,%eax
+ 80484b7:	c9                   	leave  
+ 80484b8:	c3                   	ret    
+
+```
 
 ### Demo: Executing program using gdb
-
-
 #### Invoking executable binary using using gdb
-
 ```markdown
 
 
@@ -134,8 +236,6 @@ For help, type "help".
 Type "apropos word" to search for commands related to "word"...
 Reading symbols from main...done.
 ```
-
-
 ```markdown
 ```
 #### Start program from the beginning
@@ -145,8 +245,6 @@ Starting program: /.../cso/gdb_demo/main.out
 sum of 20 and 10 is 30
 [Inferior 1 (process 6827) exited normally]
 ```
-
-
 #### Set/delete/show breakpoints
 ```markdown
 (gdb) break main
@@ -167,7 +265,6 @@ Num     Type           Disp Enb Address    What
 (gdb) info break
 No breakpoints or watchpoints.
 ```
-
 ### gdb-source level debug assistance sub commands
 
 * continue or c
@@ -183,8 +280,6 @@ No breakpoints or watchpoints.
 * list or l
 	- List source code
 
-
-
 ### gdb-low level debug assistance sub commands: disassemble, nexti, stepi, x
 
 * list or l
@@ -197,7 +292,6 @@ No breakpoints or watchpoints.
 	- Step one instruction exactly.
 * x
 	- Examine memory
-
 
 ### gdb help sub command
 List of classes of commands:
@@ -224,7 +318,6 @@ List of classes of commands:
 * Command name abbreviations are allowed if unambiguous. 
 
 ### gdb demo
-
 ```markdown
 
 nr83@Nabil-Dell:~/github/cso/gdb_demo$ gdb main.out 
@@ -363,5 +456,4 @@ Dump of assembler code for function sum:
    0x080484d1 <+24>:	ret    
 End of assembler dump.
 (gdb) 
-
 ```
