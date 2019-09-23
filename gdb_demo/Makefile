@@ -1,5 +1,5 @@
 
-CFLAGS=-m32 -fomit-frame-pointer  -fno-pic -O1  -fno-stack-protector
+CFLAGS=-m32 -fomit-frame-pointer  -fno-pic   -fno-stack-protector
 
 
 CC=gcc-4.8
@@ -15,7 +15,7 @@ main.o : main.c
 	$(CC) -g $(CFLAGS) -g -c ${<}
 
 sum.o : sum.c
-	$(CC) $(CFLAGS) -c -O1 ${<}
+	$(CC) $(CFLAGS) -c -g  ${<}
 
 print.o : print.c
 	$(CC) $(CFLAGS) -c -O1 ${<}

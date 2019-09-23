@@ -223,185 +223,145 @@ List of classes of commands:
 	- "apropos word" to search for commands related to "word".
 * Command name abbreviations are allowed if unambiguous. 
 
+### gdb demo
 
 ```markdown
 
+nr83@Nabil-Dell:~/github/cso/gdb_demo$ gdb main.out 
+For help, type "help".
+Type "apropos word" to search for commands related to "word"...
+Reading symbols from main.out...done.
 (gdb) break main
-Breakpoint 1 at 0x5ae: file main.c, line 7.
-(gdb) break print
-Function "print" not defined.
-Make breakpoint pending on future shared library load? (y or [n]) n
+Breakpoint 1 at 0x8048456: file main.c, line 4.
 (gdb) break sum
-Breakpoint 2 at 0x603
-(gdb) i break
+Breakpoint 2 at 0x80484b9: file sum.c, line 2.
+(gdb) break  print_result 
+Breakpoint 3 at 0x80484d2
+
+(gdb) info break
 Num     Type           Disp Enb Address    What
-1       breakpoint     keep y   0x000005ae in main at main.c:7
-2       breakpoint     keep y   0x00000603 <sum>
+1       breakpoint     keep y   0x08048456 in main at main.c:4
+2       breakpoint     keep y   0x080484b9 in sum at sum.c:2
+3       breakpoint     keep y   0x080484d2 <print_result>
+
+
 (gdb) r
 Starting program: /home/nr83/github/cso/gdb_demo/main.out 
 
-Breakpoint 1, main (argc=1, argv=0xffffd114) at main.c:7
-7	    int num1 = 10;
-(gdb) list
-2	#include"sum.h"
-3	#include"print.h"
-4	int main(int argc, char **argv)
-5	{
-6	    int res;
-7	    int num1 = 10;
-8	    int num2 = 20;
-9	
-10	    num1 = num1 ^ num2;
-11	    num2 = num1 ^ num2;
+Breakpoint 1, main (argc=1, argv=0xffffd114) at main.c:4
+4	    int num1 = 10;
 (gdb) n
-8	    int num2 = 20;
+5	    int num2 = 20;
 (gdb) 
-10	    num1 = num1 ^ num2;
+7	    num1 = num1 ^ num2;
 (gdb) 
-11	    num2 = num1 ^ num2;
+8	    num2 = num1 ^ num2;
 (gdb) 
-12	    num1 = num1 ^ num2;
+9	    num1 = num1 ^ num2;
 (gdb) 
-14	    res = sum(num1,num2);
-(gdb) step 
+11	    res = sum(num1,num2);
+(gdb) step
 
-Breakpoint 2, 0x56555603 in sum ()
-(gdb) disassemble 
-Dump of assembler code for function sum:
-=> 0x56555603 <+0>:	sub    $0x10,%esp
-   0x56555606 <+3>:	mov    0x14(%esp),%edx
-   0x5655560a <+7>:	mov    0x18(%esp),%eax
-   0x5655560e <+11>:	add    %edx,%eax
-   0x56555610 <+13>:	mov    %eax,0xc(%esp)
-   0x56555614 <+17>:	mov    0xc(%esp),%eax
-   0x56555618 <+21>:	add    $0x10,%esp
-   0x5655561b <+24>:	ret    
-End of assembler dump.
-(gdb) nexti
-0x56555606 in sum ()
-(gdb) ni
-0x5655560a in sum ()
+Breakpoint 2, sum (num1=20, num2=10) at sum.c:2
+2	{
+(gdb) n
+4	    result = num1 + num2;
+(gdb) n
+5	    return result;
 (gdb) 
-0x5655560e in sum ()
+6	}
 (gdb) 
-0x56555610 in sum ()
-(gdb) 
-0x56555614 in sum ()
-(gdb) 
-0x56555618 in sum ()
-(gdb) 
-0x5655561b in sum ()
-(gdb) 
-0x565555dc in main (argc=1, argv=0xffffd114) at main.c:14
-14	    res = sum(num1,num2);
-(gdb) disassemble 
-Dump of assembler code for function main:
-   0x5655559d <+0>:	lea    0x4(%esp),%ecx
-   0x565555a1 <+4>:	and    $0xfffffff0,%esp
-   0x565555a4 <+7>:	pushl  -0x4(%ecx)
-   0x565555a7 <+10>:	push   %ebp
-   0x565555a8 <+11>:	mov    %esp,%ebp
-   0x565555aa <+13>:	push   %ecx
-   0x565555ab <+14>:	sub    $0x14,%esp
-   0x565555ae <+17>:	movl   $0xa,-0x14(%ebp)
-   0x565555b5 <+24>:	movl   $0x14,-0x10(%ebp)
-   0x565555bc <+31>:	mov    -0x10(%ebp),%eax
-   0x565555bf <+34>:	xor    %eax,-0x14(%ebp)
-   0x565555c2 <+37>:	mov    -0x14(%ebp),%eax
-   0x565555c5 <+40>:	xor    %eax,-0x10(%ebp)
-   0x565555c8 <+43>:	mov    -0x10(%ebp),%eax
-   0x565555cb <+46>:	xor    %eax,-0x14(%ebp)
-   0x565555ce <+49>:	sub    $0x8,%esp
-   0x565555d1 <+52>:	pushl  -0x10(%ebp)
-   0x565555d4 <+55>:	pushl  -0x14(%ebp)
-   0x565555d7 <+58>:	call   0x56555603 <sum>
-=> 0x565555dc <+63>:	add    $0x10,%esp
-   0x565555df <+66>:	mov    %eax,-0xc(%ebp)
-   0x565555e2 <+69>:	sub    $0x4,%esp
----Type <return> to continue, or q <return> to quit---nexti
-   0x565555e5 <+72>:	pushl  -0xc(%ebp)
-   0x565555e8 <+75>:	pushl  -0x10(%ebp)
-   0x565555eb <+78>:	pushl  -0x14(%ebp)
-   0x565555ee <+81>:	call   0x5655561c <print_result>
-   0x565555f3 <+86>:	add    $0x10,%esp
-   0x565555f6 <+89>:	mov    $0x0,%eax
-   0x565555fb <+94>:	mov    -0x4(%ebp),%ecx
-   0x565555fe <+97>:	leave  
-   0x565555ff <+98>:	lea    -0x4(%ecx),%esp
-   0x56555602 <+101>:	ret    
-End of assembler dump.
-(gdb) nexti
-0x565555df	14	    res = sum(num1,num2);
-(gdb) b *0x565555ee
-Breakpoint 3 at 0x565555ee: file main.c, line 15.
-(gdb) c
-Continuing.
-
-Breakpoint 3, 0x565555ee in main (argc=1, argv=0xffffd114) at main.c:15
-15	    print_result(num1, num2, res);
-(gdb) disassemble 
-Dump of assembler code for function main:
-   0x5655559d <+0>:	lea    0x4(%esp),%ecx
-   0x565555a1 <+4>:	and    $0xfffffff0,%esp
-   0x565555a4 <+7>:	pushl  -0x4(%ecx)
-   0x565555a7 <+10>:	push   %ebp
-   0x565555a8 <+11>:	mov    %esp,%ebp
-   0x565555aa <+13>:	push   %ecx
-   0x565555ab <+14>:	sub    $0x14,%esp
-   0x565555ae <+17>:	movl   $0xa,-0x14(%ebp)
-   0x565555b5 <+24>:	movl   $0x14,-0x10(%ebp)
-   0x565555bc <+31>:	mov    -0x10(%ebp),%eax
-   0x565555bf <+34>:	xor    %eax,-0x14(%ebp)
-   0x565555c2 <+37>:	mov    -0x14(%ebp),%eax
-   0x565555c5 <+40>:	xor    %eax,-0x10(%ebp)
-   0x565555c8 <+43>:	mov    -0x10(%ebp),%eax
-   0x565555cb <+46>:	xor    %eax,-0x14(%ebp)
-   0x565555ce <+49>:	sub    $0x8,%esp
-   0x565555d1 <+52>:	pushl  -0x10(%ebp)
-   0x565555d4 <+55>:	pushl  -0x14(%ebp)
-   0x565555d7 <+58>:	call   0x56555603 <sum>
-   0x565555dc <+63>:	add    $0x10,%esp
-   0x565555df <+66>:	mov    %eax,-0xc(%ebp)
-   0x565555e2 <+69>:	sub    $0x4,%esp
----Type <return> to continue, or q <return> to quit---
-   0x565555e5 <+72>:	pushl  -0xc(%ebp)
-   0x565555e8 <+75>:	pushl  -0x10(%ebp)
-   0x565555eb <+78>:	pushl  -0x14(%ebp)
-=> 0x565555ee <+81>:	call   0x5655561c <print_result>
-   0x565555f3 <+86>:	add    $0x10,%esp
-   0x565555f6 <+89>:	mov    $0x0,%eax
-   0x565555fb <+94>:	mov    -0x4(%ebp),%ecx
-   0x565555fe <+97>:	leave  
-   0x565555ff <+98>:	lea    -0x4(%ecx),%esp
-   0x56555602 <+101>:	ret    
-End of assembler dump.
+main (argc=1, argv=0xffffd114) at main.c:12
+12	    print_result(num1, num2, res);
 (gdb) stepi
-0x5655561c in print_result ()
+0x0804849a	12	    print_result(num1, num2, res);
+(gdb) 
+0x0804849e	12	    print_result(num1, num2, res);
+(gdb) 
+0x080484a2	12	    print_result(num1, num2, res);
+(gdb) stepi
+0x080484a6	12	    print_result(num1, num2, res);
+(gdb) stepi
+0x080484aa	12	    print_result(num1, num2, res);
+(gdb) stepi
+0x080484ad	12	    print_result(num1, num2, res);
+(gdb) stepi
+
+Breakpoint 3, 0x080484d2 in print_result ()
+(gdb) bt
+#0  0x080484d2 in print_result ()
+#1  0x080484b2 in main (argc=1, argv=0xffffd114) at main.c:12
 (gdb) disassemble 
 Dump of assembler code for function print_result:
-=> 0x5655561c <+0>:		sub    $0x2c,%esp
-   0x5655561f <+3>:		mov    %gs:0x14,%eax
-   0x56555625 <+9>:		mov    %eax,0x1c(%esp)
-   0x56555629 <+13>:	xor    %eax,%eax
-   0x5655562b <+15>:	movl   $0x206d7573,0x15(%esp)
-   0x56555633 <+23>:	movw   $0x666f,0x19(%esp)
-   0x5655563a <+30>:	movb   $0x0,0x1b(%esp)
-   0x5655563f <+35>:	movl   $0x646e61,0x11(%esp)
-   0x56555647 <+43>:	movl   $0x56555710,0xc(%esp)
-   0x5655564f <+51>:	sub    $0x4,%esp
-   0x56555652 <+54>:	pushl  0x3c(%esp)
-   0x56555656 <+58>:	pushl  0x14(%esp)
-   0x5655565a <+62>:	pushl  0x40(%esp)
-   0x5655565e <+66>:	lea    0x21(%esp),%eax
-   0x56555662 <+70>:	push   %eax
-   0x56555663 <+71>:	pushl  0x44(%esp)
-   0x56555667 <+75>:	lea    0x2d(%esp),%eax
-   0x5655566b <+79>:	push   %eax
-   0x5655566c <+80>:	push   $0x56555713
-   0x56555671 <+85>:	call   0xf7e1f2d0 <printf>
-   0x56555676 <+90>:	add    $0x20,%esp
-   0x56555679 <+93>:	nop
+=> 0x080484d2 <+0>:	sub    $0x3c,%esp
+   0x080484d5 <+3>:	movl   $0x206d7573,0x29(%esp)
+   0x080484dd <+11>:	movw   $0x666f,0x2d(%esp)
+   0x080484e4 <+18>:	movb   $0x0,0x2f(%esp)
+   0x080484e9 <+23>:	movl   $0x646e61,0x25(%esp)
+   0x080484f1 <+31>:	mov    0x48(%esp),%eax
+   0x080484f5 <+35>:	mov    %eax,0x1c(%esp)
+   0x080484f9 <+39>:	movl   $0x80485c0,0x18(%esp)
+   0x08048501 <+47>:	mov    0x44(%esp),%eax
+   0x08048505 <+51>:	mov    %eax,0x14(%esp)
+   0x08048509 <+55>:	lea    0x25(%esp),%eax
+   0x0804850d <+59>:	mov    %eax,0x10(%esp)
+   0x08048511 <+63>:	mov    0x40(%esp),%eax
+   0x08048515 <+67>:	mov    %eax,0xc(%esp)
+   0x08048519 <+71>:	lea    0x29(%esp),%eax
+   0x0804851d <+75>:	mov    %eax,0x8(%esp)
+   0x08048521 <+79>:	movl   $0x80485c3,0x4(%esp)
+   0x08048529 <+87>:	movl   $0x1,(%esp)
+   0x08048530 <+94>:	call   0x8048310 <__printf_chk@plt>
+   0x08048535 <+99>:	add    $0x3c,%esp
+   0x08048538 <+102>:	ret    
+End of assembler dump.
+(gdb) nexti
+0x080484d5 in print_result ()
+(gdb) nexti
+0x080484dd in print_result ()
+(gdb) disassemble 
+Dump of assembler code for function print_result:
+   0x080484d2 <+0>:	sub    $0x3c,%esp
+   0x080484d5 <+3>:	movl   $0x206d7573,0x29(%esp)
+=> 0x080484dd <+11>:	movw   $0x666f,0x2d(%esp)
+   0x080484e4 <+18>:	movb   $0x0,0x2f(%esp)
+   0x080484e9 <+23>:	movl   $0x646e61,0x25(%esp)
+   0x080484f1 <+31>:	mov    0x48(%esp),%eax
+   0x080484f5 <+35>:	mov    %eax,0x1c(%esp)
+   0x080484f9 <+39>:	movl   $0x80485c0,0x18(%esp)
+   0x08048501 <+47>:	mov    0x44(%esp),%eax
+   0x08048505 <+51>:	mov    %eax,0x14(%esp)
+   0x08048509 <+55>:	lea    0x25(%esp),%eax
+   0x0804850d <+59>:	mov    %eax,0x10(%esp)
+   0x08048511 <+63>:	mov    0x40(%esp),%eax
+   0x08048515 <+67>:	mov    %eax,0xc(%esp)
+   0x08048519 <+71>:	lea    0x29(%esp),%eax
+   0x0804851d <+75>:	mov    %eax,0x8(%esp)
+   0x08048521 <+79>:	movl   $0x80485c3,0x4(%esp)
+   0x08048529 <+87>:	movl   $0x1,(%esp)
+   0x08048530 <+94>:	call   0x8048310 <__printf_chk@plt>
+   0x08048535 <+99>:	add    $0x3c,%esp
+   0x08048538 <+102>:	ret    
+End of assembler dump.
+(gdb) x/1s  $0x80485c0
+Value can't be converted to integer.
+(gdb) x/1s  0x80485c0
+0x80485c0:	"is"
+(gdb) x/1s  0x29(%esp)
+A syntax error in expression, near `%esp)'.
+(gdb) x/1s  0x29+$esp
+0xffffd039:	"sum \346\337\367\374c\372", <incomplete sequence \367>
+(gdb) disassemble sum 
+Dump of assembler code for function sum:
+   0x080484b9 <+0>:	sub    $0x10,%esp
+   0x080484bc <+3>:	mov    0x18(%esp),%eax
+   0x080484c0 <+7>:	mov    0x14(%esp),%edx
+   0x080484c4 <+11>:	add    %edx,%eax
+   0x080484c6 <+13>:	mov    %eax,0xc(%esp)
+   0x080484ca <+17>:	mov    0xc(%esp),%eax
+   0x080484ce <+21>:	add    $0x10,%esp
+   0x080484d1 <+24>:	ret    
+End of assembler dump.
+(gdb) 
 
-(gdb) x/s 0x56555710
-0x56555710:	"is"
 ```
