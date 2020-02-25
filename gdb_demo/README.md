@@ -457,3 +457,9 @@ Dump of assembler code for function sum:
 End of assembler dump.
 (gdb) 
 ```
+
+
+
+### Install the following packages for 32 bit library support
+
+sudo apt-get install gcc-multilib g++-multilib
